@@ -22,8 +22,28 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt
 
+    - name: Lint (flake8)
+      run: flake8 .
+
+    - name: Format check (black)
+      run: black --check .
+
     - name: Run tests
-      run: pytest
+      run: pytest -v
 
     - name: Run script
       run: python main.py
+
+    - name: Send Telegram message (success)
+      if: success()
+      run: |
+        curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
+        -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+        -d text=" CI PASSED: ${{ github.repository }}"
+
+    - name: Send Telegram message (failed)
+      if: failure()
+      run: |
+        curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage \
+        -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+        -d text=" CI FAILED: ${{ github.repository }}"

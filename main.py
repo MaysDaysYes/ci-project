@@ -1,5 +1,5 @@
 def greet():
-	return"Hello from my peresdacha!"
+    return "Hello from peresdacha!"
 
-if __name__ == "__main__"
-	print(greet())
+if __name__ == "__main__":
+    print(greet())
